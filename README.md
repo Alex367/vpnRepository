@@ -138,3 +138,14 @@ Playwright runs tests without checking their types. `npm run typecheck` checks e
 ### VS Code
 
 Install the [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extensions. Then turn on format on save, with Prettier as the default formatter, to format every file automatically.
+
+## Continuous integration
+
+GitHub Actions runs `.github/workflows/tests.yml` on every push to `main` and on every pull request into `main`:
+
+1. **Format, lint and type check.** If any of them fails, the tests don't run.
+2. **Playwright tests** that stay on the Planet VPN site, in Chromium.
+
+The redirect tests create real checkout sessions, so they never run automatically. To include them, open the **Actions** tab, choose **Tests**, click **Run workflow** and tick the redirect option.
+
+Every run uploads the Playwright and Allure reports. Download them from the **Artifacts** section at the bottom of the run's page. They are kept for 14 days.

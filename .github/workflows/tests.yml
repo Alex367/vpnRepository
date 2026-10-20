@@ -1,0 +1,95 @@
+name: Tests
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+        inputs:
+            run_redirects:
+                description: "Also run redirect tests (creates real checkout sessions at Stripe, Heleket and X-Hub)"
+                type: boolean
+                default: false
+
+# Cancel an older run of the same branch when a new commit arrives.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    checks:
+        name: Format, lint and type check
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 22
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Check formatting
+              run: npm run format:check
+
+            - name: Lint
+              run: npm run lint
+
+            - name: Type check
+              run: npm run typecheck
+
+    tests:
+        name: Playwright tests
+        needs: checks
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 22
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install Chromium
+              run: npx playwright install --with-deps chromium
+
+            - name: Run tests on the Planet VPN site
+              if: ${{ !inputs.run_redirects }}
+              run: npx playwright test tests/paymentMethods.spec.ts tests/termsOfUse.spec.ts
+
+            - name: Run all tests, including redirects
+              if: ${{ inputs.run_redirects }}
+              run: npm test
+
+            - name: Build Allure report
+              if: ${{ !cancelled() && hashFiles('allure-results/**') != '' }}
+              run: npm run allure:generate
+
+            - name: Upload Playwright report
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 14
+                  if-no-files-found: ignore
+
+            - name: Upload Allure report
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: allure-report
+                  path: allure-report/
+                  retention-days: 14
+                  if-no-files-found: ignore
