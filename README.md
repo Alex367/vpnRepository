@@ -146,6 +146,10 @@ GitHub Actions runs `.github/workflows/tests.yml` on every push to `main` and on
 1. **Format, lint and type check.** If any of them fails, the tests don't run.
 2. **Playwright tests** that stay on the Planet VPN site, in Chromium.
 
-The redirect tests create real checkout sessions, so they never run automatically. To include them, open the **Actions** tab, choose **Tests**, click **Run workflow** and tick the redirect option.
+### Why the pipeline runs 12 of the 19 tests
+
+The automatic runs skip the 7 redirect tests in `tests/redirectedProviders.spec.ts`:
+
+- **They create real orders.** Each redirect test opens a real checkout session at Stripe, Heleket or X-Hub. Running them on every push would fill the shop's payment accounts with unpaid orders.
 
 Every run uploads the Playwright and Allure reports. Download them from the **Artifacts** section at the bottom of the run's page. They are kept for 14 days.
