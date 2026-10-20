@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 
-export class CommonObjects {
+export class FreeVpnPlanetBasePage {
     readonly page: Page;
     readonly headerSecondary: Locator;
     readonly payButton: Locator;

@@ -1,13 +1,14 @@
 import { Locator, Page } from "@playwright/test";
-import { CommonObjects } from "./common.page";
+import { FreeVpnPlanetBasePage } from "./freeVpnPlanetBase.page";
 
 type CountryCode = "NL" | "DE" | "US" | "TK" | "FR" | "CZ" | "ES" | "PL" | "AR" | "TA" | "KZ" | "UA";
-type CurrencyCode = "USD" | "EUR" | "RUB";
-type OfferType = "1_month" | "1_year" | "2_days";
+export type CurrencyCode = "USD" | "EUR" | "RUB";
+export type OfferType = "1_month" | "1_year" | "2_days";
 
-export class HomePage extends CommonObjects {
+export class HomePage extends FreeVpnPlanetBasePage {
     readonly page: Page;
     readonly title = "Your Personal VPN - Buy Static VPN and IP Address | Planet VPN";
+    readonly paymentMethodUrl = /personal\.freevpnplanet\.com\/payment\//;
 
     readonly locationDropdown: Locator;
     readonly currencyDropdown: Locator;
@@ -56,5 +57,12 @@ export class HomePage extends CommonObjects {
 
     async fillEmail(email: string): Promise<void> {
         await this.emailInput.fill(email);
+    }
+
+    async choosePlan(currency: CurrencyCode, offer: OfferType, email: string): Promise<void> {
+        await this.selectCurrency(currency);
+        await this.selectOffer(offer);
+        await this.fillEmail(email);
+        await this.payButton.click();
     }
 }
