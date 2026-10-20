@@ -6,7 +6,15 @@ import prettier from "eslint-config-prettier";
 
 export default defineConfig(
     {
-        ignores: ["node_modules/", "test-results/", "playwright-report/", "blob-report/", "playwright/.cache/"],
+        ignores: [
+            "node_modules/",
+            "test-results/",
+            "playwright-report/",
+            "blob-report/",
+            "playwright/.cache/",
+            "allure-results/",
+            "allure-report/",
+        ],
     },
     eslint.configs.recommended,
     tseslint.configs.recommendedTypeChecked,
