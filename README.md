@@ -4,6 +4,10 @@ End-to-end tests for the Planet VPN checkout at [personal.freevpnplanet.com](htt
 
 The goal is to cover every available payment method and to verify that each one redirects to the correct payment provider.
 
+## Defects and recommendations
+
+The [accompanying document](https://docs.google.com/document/d/1gEHKNMJEqaNdVM49nUwRjQxp6xbXpttH6CC0wxCBo_Y/edit?usp=sharing) describes the defects found during testing and recommends improvements to the interface. Each item has a description, steps to reproduce and the expected behaviour.
+
 ## What is tested
 
 The available payment methods depend on the currency chosen on the first page:
